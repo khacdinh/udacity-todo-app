@@ -1,6 +1,6 @@
 org: dinodinhnk
-app: udacity-todo-app-project
-service: udacity-todo-app-project
+app: p4-uda-todo-app
+service: p4-uda-todo-app
 
 plugins:
   - serverless-iam-roles-per-function
@@ -18,9 +18,9 @@ provider:
   tracing: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
-    TODOS_TABLE: UdaTodos-${self:provider.stage}
-    TODOS_USER_INDEX: UdaTodosUserIndex
-    IMAGES_S3_BUCKET: uda-serverless-todo-images-${self:provider.stage}
+    TODOS_TABLE: p4UdaTodos-${self:provider.stage}
+    TODOS_USER_INDEX: p4UdaTodosUserIndex
+    IMAGES_S3_BUCKET: p4-uda-serverless-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: '300'
 
 functions:
@@ -83,8 +83,9 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestBodyValidator
           request:
-            schema:
+            schemas:
               application/json: ${file(src/requests/create-todo-request.json)}
     iamRoleStatements:
       - Effect: Allow
@@ -106,9 +107,7 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
-          request:
-            schema:
-              application/json: ${file(src/requests/update-todo-request.json)}
+          request: ${file(src/requests/update-todo-request.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -223,7 +222,6 @@ resources:
                 - DELETE
                 - HEAD
               MaxAge: 3000
-
     BucketPolicy:
           Type: AWS::S3::BucketPolicy
           Properties:
